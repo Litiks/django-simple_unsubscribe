@@ -3,7 +3,7 @@ django-simple_unsubscribe
 
 A pluggable django app that prevents email delivery to un-desiring recipients.
 
-This app was designed to be easily plugged into older django sites, with little configuration or adjustment. It works by monkey_patching django's email delivery classes, adding a blacklist check, and appending unsubscribe test to the end of every email.
+This app was designed to be easily plugged into older django sites, with little configuration or adjustment. It works by monkey_patching django's email delivery classes; adding a blacklist check, and appending unsubscribe test to the end of every email.
 
 
 Integration
