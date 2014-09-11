@@ -18,8 +18,9 @@ Integration
 Settings
 --------
 
-Ensure that the following settings are currently used:
-settings.ROOT_DOMAIN
+The following settings are currently used:
+
+- settings.ROOT_DOMAIN
 
 
 TODO:
