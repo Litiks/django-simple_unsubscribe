@@ -17,4 +17,4 @@ def unsubscribe(request, token, template_name='unsubscribe/complete.html'):
         'unsubscribe_detail': detail,
         'site': site,
     }
-    return render_to_response(template_name, RequestContext(context))
+    return render_to_response(template_name, RequestContext(request, context))
