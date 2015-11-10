@@ -49,7 +49,7 @@ def patch_send_email():
             #they're unsubscribed, don't send
             self.to = []    #this will not fail the send function. see https://docs.djangoproject.com/en/dev/topics/email/
 
-        if settings.EMAIL_SIGNATURE:
+        if hasattr(settings, 'EMAIL_SIGNATURE'):
             signature = settings.EMAIL_SIGNATURE
         else:
             signature = "The team at %s" % site.name
@@ -61,7 +61,7 @@ def patch_send_email():
             for i, alt in enumerate(self.alternatives):
                 content, mimetype = alt
                 if 'html' in mimetype:
-                    if settings.EMAIL_SIGNATURE:
+                    if hasattr(settings, 'EMAIL_SIGNATURE'):
                         signature = settings.EMAIL_SIGNATURE.replace("\n","<br>")
                     else:
                         signature = "The team at %s" % site.name
