@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -18,9 +19,10 @@ class UnsubscribeDetail(models.Model):
         return self.email
 
     def unsubscribe_url(self):
-        return "%s%s" % (settings.ROOT_DOMAIN, reverse('unsubscribe', args=[self.token]))
+        domain = Site.objects.get_current().domain
+        return "http://%s%s" % (domain, reverse('unsubscribe', args=[self.token]))
 
-#automatically create a subscription details object for every user
+# Some automatic cleanup. This isn't super necessary, but it's helpful if we delete a user to delete our memory of them as well. This falls in the category if expected behaviour.
 def delete_unsubscribe_detail(sender, instance, **kwargs):
     if instance:
         #fetch any details for this email address
@@ -29,14 +31,17 @@ def delete_unsubscribe_detail(sender, instance, **kwargs):
                 
 models.signals.pre_delete.connect(delete_unsubscribe_detail, sender=User)
 
-#monkey patch the email sending logic to consider and append unsubscription logic
+# monkey patch the email sending logic to consider and append unsubscription logic
 def patch_send_email():
     EmailMessage.send_orig = EmailMessage.send
     def new_send(self, *args, **kwargs):
+        # todo: we should fix this to handle multiple recipients.
         if self.to:
             to = self.to[0]
         else:
             to = ''
+
+        site = Site.objects.get_current()
 
         #check if recipient is already unsubscribed
         detail, created = UnsubscribeDetail.objects.get_or_create(email=to)
@@ -44,7 +49,11 @@ def patch_send_email():
             #they're unsubscribed, don't send
             self.to = []    #this will not fail the send function. see https://docs.djangoproject.com/en/dev/topics/email/
 
-        self.body += "\n\n\nExercise MD\n8936 Talbot Trail\nBlenheim, ON N0P 1A0\n(519) 351-5518\n\nTo unsubscribe, click the following link:\n%s" % detail.unsubscribe_url()
+        if settings.EMAIL_SIGNATURE:
+            signature = settings.EMAIL_SIGNATURE
+        else:
+            signature = "The team at %s" % site.name
+        self.body += "\n\n\n%s\n\nTo unsubscribe, click the following link:\n%s" % (signature, detail.unsubscribe_url())
         self.extra_headers['List-Unsubscribe'] = "<%s>" % detail.unsubscribe_url()
 
         #look for an html body
@@ -52,7 +61,11 @@ def patch_send_email():
             for i, alt in enumerate(self.alternatives):
                 content, mimetype = alt
                 if 'html' in mimetype:
-                    content += "<br><br><br>Exercise MD<br>8936 Talbot Trail<br>Blenheim, ON N0P 1A0<br>(519) 351-5518<br><br><a href='%s'>unsubscribe</a> to stop receiving emails from Exercise MD" % detail.unsubscribe_url()
+                    if settings.EMAIL_SIGNATURE:
+                        signature = settings.EMAIL_SIGNATURE.replace("\n","<br>")
+                    else:
+                        signature = "The team at %s" % site.name
+                    content += "<br><br><br>%s<br><br><a href='%s'>unsubscribe</a> to stop receiving emails from %s" % (signature, detail.unsubscribe_url(), site.name)
                     self.alternatives[i] = (content, mimetype)
 
         return self.send_orig(*args, **kwargs)
