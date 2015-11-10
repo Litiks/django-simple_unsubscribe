@@ -9,8 +9,10 @@ This app was designed to be easily plugged into older django sites with very lit
 Integration
 -----------
 
-1. Install with `pip install https://github.com/Litiks/django-simple_unsubscribe/archive/master.zip`
- - Alternatively: copy the 'unsubscribe' folder to your python working directory
+1. Install:
+ - using pip: `pip install https://github.com/Litiks/django-simple_unsubscribe/archive/master.zip`
+ - or: add to your requirements.txt: `-e git+https://github.com/Litiks/django-simple_unsubscribe.git#egg=django-simple_unsubscribe`
+ - or: copy the 'unsubscribe' folder to your python working directory
 2. Add 'unsubscribe' as the FIRST ITEM in your settings.INSTALLED_APPS
 3. Add to your urls.py: `url(r'^unsub/', include('unsubscribe.urls')),`
 4. That's it! You're done!
