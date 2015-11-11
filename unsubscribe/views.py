@@ -3,8 +3,10 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, TemplateDoesNotExist
 from django.template.loader import render_to_string
+from django.http import HttpResponseRedirect
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
+from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from unsubscribe.models import UnsubscribeDetail
@@ -32,7 +34,7 @@ def unsubscribe(request, token):
     else:
         email.attach_alternative(html_message, "text/html")
 
-    return render_to_response(template_name, RequestContext(request, context))
+    return HttpResponseRedirect(reverse('unsubscribe_complete', args=[detail.token]))
 
 def unsubscribe_complete(request, token, template_name='unsubscribe/unsubscribe_complete.html'):
     detail = get_object_or_404(UnsubscribeDetail, token=token)
@@ -67,7 +69,7 @@ def resubscribe(request, token):
     else:
         email.attach_alternative(html_message, "text/html")
 
-    return render_to_response(template_name, RequestContext(request, context))
+    return HttpResponseRedirect(reverse('resubscribe_complete', args=[detail.token]))
 
 def resubscribe_complete(request, token, template_name='unsubscribe/resubscribe_complete.html'):
     detail = get_object_or_404(UnsubscribeDetail, token=token)
