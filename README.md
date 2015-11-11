@@ -14,8 +14,8 @@ Install
 - or: copy the 'unsubscribe' folder to your python working directory
 
 
-Integration
------------
+Integrate
+---------
 
 1. Add 'unsubscribe' as the FIRST ITEM in your settings.INSTALLED_APPS
 2. Add to your urls.py: `url(r'^unsub/', include('unsubscribe.urls')),`
@@ -23,12 +23,33 @@ Integration
 4. That's it! You're done!
 
 
-Settings
---------
+Configure Templates
+-------------------
 
-The following (optional) settings are currently used:
+Confirmation templates are shown on-screen when a user unsubscribes/resubscribes
 
-- EMAIL_SIGNATURE = "Litiks\n422111 Concession 6 NDR\nElmwood On, Canada, N0G1S0\n1 289-812-3835"
+- unsubscribe/unsubscribe_complete.html
+- unsubscribe/resubscribe_complete.html
+
+
+Email confirmation templates are sent via email when a user unsubscribes/resubscribes
+
+- unsubscribe/email/unsubscribe_complete.txt
+- unsubscribe/email/unsubscribe_complete.html
+- unsubscribe/email/resubscribe_complete.txt
+- unsubscribe/email/resubscribe_complete.html
+
+
+According to canspam rules, your emails should include your address and a phone number. To add a 'signature' to all outgoing emails, create signature templates as follows:
+
+- unsubscribe/email/signature.txt
+- unsubscribe/email/signature.html
+
+
+Usage
+-----
+
+Beyond setup, you won't need to make any changes to how you send emails. If you want, you can bypass the unsubscribe logic, (including the signature, and blacklist checks), just add `bypass_unsub=True` to your send_mail or EmailMessage call.
 
 
 TODO:
