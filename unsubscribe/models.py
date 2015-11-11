@@ -40,7 +40,7 @@ models.signals.pre_delete.connect(delete_unsubscribe_detail, sender=User)
 def patch_send_email():
     EmailMessage.send_orig = EmailMessage.send
     def new_send(self, *args, **kwargs):
-        if not kwargs.get('bypass_unsub'):
+        if not getattr(self, 'bypass_unsub'):
             # todo: we should fix this to handle multiple recipients.
             if self.to:
                 to = self.to[0]
