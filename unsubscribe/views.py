@@ -33,6 +33,7 @@ def unsubscribe(request, token):
         pass
     else:
         email.attach_alternative(html_message, "text/html")
+    email.send()
 
     return HttpResponseRedirect(reverse('unsubscribe_complete', args=[detail.token]))
 
@@ -68,6 +69,7 @@ def resubscribe(request, token):
         pass
     else:
         email.attach_alternative(html_message, "text/html")
+    email.send()
 
     return HttpResponseRedirect(reverse('resubscribe_complete', args=[detail.token]))
 
