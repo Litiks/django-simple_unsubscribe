@@ -3,5 +3,5 @@ You have successfully unsubscribed from {{ site.domain }}
 We're sorry to see you go, 
 
 
-If you'd like to receive emails from us again, just the following link:
+If you'd like to receive emails from us again, just click the following link:
 {{ unsubscribe_detail.resubscribe_url }}
