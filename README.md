@@ -49,7 +49,12 @@ According to canspam rules, your emails should include your address and a phone 
 Usage
 -----
 
-Beyond setup, you won't need to make any changes to how you send emails. If you want, you can bypass the unsubscribe logic, (including the signature, and blacklist checks), just add `bypass_unsub=True` to your send_mail or EmailMessage call.
+Beyond setup, you won't need to make any changes to how you send emails. If you want, you can bypass the unsubscribe logic, (including the signature, and blacklist checks), just add `bypass_unsub=True` to your EmailMessage object.
+
+    from django.core.mail import EmailMessage
+    email = EmailMessage("subject","message",to=['test@amad.ca',])
+    email.bypass_unsub = True
+    email.send()
 
 
 TODO:
