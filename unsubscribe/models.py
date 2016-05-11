@@ -19,13 +19,18 @@ class UnsubscribeDetail(models.Model):
     def __unicode__(self):
         return self.email
 
+    def protocol(self):
+        if hasattr(settings,"ACCOUNT_DEFAULT_HTTP_PROTOCOL"):
+            return settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        return 'http'
+
     def unsubscribe_url(self):
         domain = Site.objects.get_current().domain
-        return "http://%s%s" % (domain, reverse('unsubscribe', args=[self.token]))
+        return "%s://%s%s" % (self.protocol(), domain, reverse('unsubscribe', args=[self.token]))
 
     def resubscribe_url(self):
         domain = Site.objects.get_current().domain
-        return "http://%s%s" % (domain, reverse('resubscribe', args=[self.token]))
+        return "%s://%s%s" % (self.protocol(), domain, reverse('resubscribe', args=[self.token]))
 
 # Some automatic cleanup. This isn't super necessary, but it's helpful if we delete a user to delete our memory of them as well. This falls in the category if expected behaviour.
 def delete_unsubscribe_detail(sender, instance, **kwargs):
